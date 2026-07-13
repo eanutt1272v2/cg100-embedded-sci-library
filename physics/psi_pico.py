@@ -1,7 +1,7 @@
 # Visualise hydrogenic wavefunctions on Casio fx-CG100.
 
 from casioplot import clear_screen, draw_string, set_pixel, show_screen
-from math import log, exp, pi, sqrt
+from math import log, exp, pi, sqrt, sin, cos
 
 from psi_pico_lib import (
     cmap_data, cmap, fmt_density, read_float, read_int, wait_for_exit, 
@@ -78,15 +78,48 @@ unit_str = " [m^-3]" if unit_choice == 2 else " [a0^-3]"
 wf = HydrogenicWavefunction(n, l, m, Z, phi_slice, plane_choice, offset)
 
 step = 2.0 * R / (SAMP - 1)
-peak = 1e-30
 
-for sy in range(SAMP):
-    v = R - step * sy
-    for sx in range(SAMP):
-        u = -R + step * sx
-        x3, y3, z3 = wf.get_coords(u, v)
-        d = wf.density_3d(x3, y3, z3)
-        if d > peak: peak = d
+density_3d_local = wf.density_3d
+
+if l == 0:
+    peak = density_3d_local(0.0, 0.0, 0.0)
+else:
+    r_ref = (n * n) / Z
+    best_ang_d = -1.0
+    th_max, ph_max = 0.0, 0.0
+    
+    for r_probe in (0.6 * r_ref, 1.0 * r_ref, 1.4 * r_ref):
+        for i in range(36):
+            th = (i / 35.0) * pi
+            sin_th = sin(th)
+            z_coord = r_probe * cos(th)
+            for j in range(18):
+                ph = (j / 17.0) * 2.0 * pi
+                x_coord = r_probe * sin_th * cos(ph)
+                y_coord = r_probe * sin_th * sin(ph)
+                
+                d = density_3d_local(x_coord, y_coord, z_coord)
+                if d > best_ang_d:
+                    best_ang_d = d
+                    th_max, ph_max = th, ph
+
+    sin_tm = sin(th_max)
+    cos_tm = cos(th_max)
+    cos_pm = cos(ph_max)
+    sin_pm = sin(ph_max)
+    
+    peak = 1e-30
+    r_limit = r_ref * 2.5
+    r_step = r_limit / 200.0
+    
+    for i in range(201):
+        r = i * r_step
+        d = density_3d_local(r * sin_tm * cos_pm, r * sin_tm * sin_pm, r * cos_tm)
+        if d > peak:
+            peak = d
+
+if peak < 1e-30:
+    peak = 1e-30
 
 if alpha <= 0.0: alpha = 1e-6
 log_alpha_plus_1 = log(1.0 + alpha)
@@ -119,17 +152,28 @@ def main():
 
     sp = set_pixel
     ss = show_screen
+    get_coords_local = wf.get_coords
+    density_3d_local = wf.density_3d
+
+    color_lut = []
+    for i in range(256):
+        norm = i / 255.0
+        val = log(1.0 + alpha * norm) / log_alpha_plus_1
+        color_lut.append(cmap(val, RC, GC, BC))
 
     for sy in range(SAMP):
         v = R - step * sy
         py = PY + sy
         for sx in range(SAMP):
             u = -R + step * sx
-            x3, y3, z3 = wf.get_coords(u, v)
-            d = wf.density_3d(x3, y3, z3)
-            norm = max(0.0, min(1.0, d / peak))
-            val = log(1.0 + alpha * norm) / log_alpha_plus_1
-            sp(sx, py, cmap(val, RC, GC, BC))
+            x3, y3, z3 = get_coords_local(u, v)
+            d = density_3d_local(x3, y3, z3)
+            
+            idx = int((d / peak) * 255)
+            if idx > 255: idx = 255
+            elif idx < 0: idx = 0
+            
+            sp(sx, py, color_lut[idx])
         ss()
 
     leg_den = LEG_H - 1 if LEG_H > 1 else 1
