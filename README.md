@@ -42,9 +42,10 @@ For full setup instructions and desktop testing, see [Running Scripts](#running-
 
 #### 1. One-time setup
 
-1. Verify the calculator firmware and Python app are installed and up to date.
-2. Connect the calculator to a **computer** via appropriate USB data cable (mobile phones or tablets are highly advised against).
-3. Select **USB Flash** (storage mode) so the calculator appears as a mounted volume.
+1. Power on the calculator and verify that the firmware and Python application are up to date.
+2. Connect the calculator to a **desktop computer** using a standard USB-C data-transfer cable (avoid charging-only cables).
+3. When the **Select Connection Mode** dialogue box automatically populates on the calculator screen, highlight **[USB Flash]** and press the **[OK / EXE]** key.
+4. Wait for the screen to display **"Preparing USB"**; the calculator will soon mount directly on your desktop as an external storage drive.
 
 #### 2. Selecting a script
 
