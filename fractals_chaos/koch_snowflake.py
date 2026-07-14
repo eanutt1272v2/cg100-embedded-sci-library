@@ -1,4 +1,4 @@
-# Render the Koch snowflake fractal.
+# Render the Koch snowflake fractal on the Casio fx-CG100.
 
 from turtle import forward, goto, hideturtle, left, pencolor, pendown, penup, right, speed
 
