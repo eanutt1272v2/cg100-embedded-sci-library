@@ -48,13 +48,13 @@ def read_float(prompt, default=None, min_value=None, max_value=None):
 
 def lgamma(x):
     if x < 0.5: return log(pi / sin(pi * x)) - lgamma(1.0 - x)
-    x -= 1.0; a = _LC[0]; t = x + 7.5
-    for i in range(1, 9): a += _LC[i] / (x + i)
-    return 0.5 * log(2 * pi) + (x + 0.5) * log(t) - t + log(a)
+    x -= 1.0; base_a = _LC[0]; t = x + 7.5
+    for i in range(1, 9): base_a += _LC[i] / (x + i)
+    return 0.5 * log(2 * pi) + (x + 0.5) * log(t) - t + log(base_a)
 
-def horner(c, t):
-    v = c[0]
-    for i in range(1, len(c)): v = v * t + c[i]
+def horner(coeffs, t):
+    v = coeffs[0]
+    for i in range(1, len(coeffs)): v = v * t + coeffs[i]
     return v
 
 def cmap(t, rc, gc, bc):
