@@ -14,7 +14,7 @@ _lanczos_coeffs = (
 )
 
 
-cmap_data = [
+cmap_registry = [
     (
         "cividis",
         [
