@@ -1,4 +1,4 @@
-# Plot logistic-map bifurcation behaviour.
+# Plot logistic-map bifurcation behaviour on the Casio fx-CG100.
 
 from casioplot import clear_screen, set_pixel, show_screen
 
