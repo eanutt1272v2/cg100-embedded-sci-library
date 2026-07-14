@@ -1,4 +1,5 @@
-# Draw and explore basic geometric shapes.
+# Draw and explore basic geometric shapes on the Casio fx-CG100.
+
 from shapes_lib import SHAPES_2D, SHAPES_3D
 
 
