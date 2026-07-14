@@ -1,4 +1,4 @@
-# Visualise real hydrogenic wavefunction probability densities on the Casio fx-CG100.
+# Visualise hydrogenic wavefunction probability densities on the Casio fx-CG100.
 
 from casioplot import clear_screen, draw_string, set_pixel, show_screen
 from math import log, exp, pi, sqrt, sin, cos
@@ -15,6 +15,13 @@ n = read_int("n (default=4): ", min_value=1, default=4)
 l = read_int("l (0..n-1, default=1): ", min_value=0, max_value=n - 1, default=1)
 m = read_int("m (-l..l, default=0): ", min_value=-l, max_value=l, default=0)
 
+print("Spherical Harmonics Basis:")
+print("1: Real (Lobed Chemistry Basis)")
+print("2: Complex (Continuous Physics Donut)")
+basis_choice = read_int("Select basis (1-2, default=1): ", min_value=1, max_value=2, default=1)
+is_real_basis = (basis_choice == 1)
+basis_str = "real" if is_real_basis else "cplx"
+
 print("Slice Plane Setup:")
 print("1: XZ plane")
 print("2: XY plane")
@@ -24,7 +31,7 @@ plane_names = {1: "XZ", 2: "XY", 3: "YZ"}
 plane_str = plane_names[plane_choice]
 
 offset = read_float("Slice offset [a0] (default=0.0): ", default=0.0)
-phi_deg = read_float("phi_deg (real Ylm, default=33): ", default=33.0)
+phi_deg = read_float("phi_deg (default=33): ", default=33.0)
 phi_slice = phi_deg * pi / 180.0
 Z = read_float("Z (1=H): ")
 if Z <= 0.0:
@@ -74,7 +81,8 @@ A0_3 = A0_M * A0_M * A0_M
 unit_scale = A0_3 if unit_choice == 2 else 1.0
 unit_str = " [m^-3]" if unit_choice == 2 else " [a0^-3]"
 
-wf = HydrogenicWavefunction(n, l, m, Z, phi_slice, plane_choice, offset)
+# Pass the basis selection parameter cleanly down to your core wavefunction class
+wf = HydrogenicWavefunction(n, l, m, Z, phi_slice, plane_choice, offset, is_real=is_real_basis)
 
 step = 2.0 * R / (SAMP - 1)
 
@@ -138,6 +146,8 @@ def main():
         + ">"
         + " Z="
         + Zs
+        + " "
+        + basis_str
         + " pl:"
         + plane_str
         + " off:"
@@ -180,7 +190,7 @@ def main():
                 idx = 0
 
             sp(sx, py, color_lut[idx])
-            
+
         ss()
 
     leg_den = LEG_H - 1 if LEG_H > 1 else 1
