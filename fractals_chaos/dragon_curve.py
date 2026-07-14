@@ -1,4 +1,4 @@
-# Render the Dragon curve fractal.
+# Render the Dragon curve fractal on the Casio fx-CG100.
 
 from turtle import forward, goto, hideturtle, left, pencolor, pendown, penup, right, speed
 
