@@ -10,47 +10,43 @@ try:
 except ImportError:
     getkey = None
 
-
 n = read_int("n (default=4): ", min_value=1, default=4)
 l = read_int("l (0..n-1, default=1): ", min_value=0, max_value=n - 1, default=1)
 m = read_int("m (-l..l, default=0): ", min_value=-l, max_value=l, default=0)
 
 print("Spherical Harmonics Basis:")
-print("1: Real (Lobed Chemistry Basis)")
-print("2: Complex (Continuous Physics Donut)")
-basis_choice = read_int("Select basis (1-2, default=1): ", min_value=1, max_value=2, default=1)
+print("1: Real")
+print("2: Complex")
+basis_choice = read_int("Select (1-2, default=1): ", min_value=1, max_value=2, default=1)
 is_real_basis = (basis_choice == 1)
 basis_str = "real" if is_real_basis else "cplx"
 
-print("Slice Plane Setup:")
-print("1: XZ plane")
-print("2: XY plane")
-print("3: YZ plane")
-plane_choice = read_int("Select plane (1-3, default=1): ", min_value=1, max_value=3, default=1)
+print("Slice Plane:")
+print("1: XZ")
+print("2: XY")
+print("3: YZ")
+plane_choice = read_int("Select (1-3, default=1): ", min_value=1, max_value=3, default=1)
 plane_names = {1: "XZ", 2: "XY", 3: "YZ"}
 plane_str = plane_names[plane_choice]
 
-offset = read_float("Slice offset [a0] (default=0.0): ", default=0.0)
-phi_deg = read_float("phi_deg (default=33): ", default=33.0)
+offset = read_float("Slice Offset [a0] (default=0.0): ", default=0.0)
+phi_deg = read_float("phi_deg (default=0.0): ", default=0.0)
 phi_slice = phi_deg * pi / 180.0
-Z = read_float("Z (1=H): ")
-if Z <= 0.0:
-    Z = 1.0
 
-R = read_float("R [a0] (0=auto): ")
-alpha = read_float("alpha (default=100): ", default=100.0)
+Z = read_float("Z (default=1.0): ", min_value=0.1, default=1.0)
+R = read_float("R [a0] (0=auto, default=0.0): ", min_value=0.0, default=0.0)
+gamma = read_float("gamma (default=1.0): ", min_value=0.01, max_value=1.0, default=1.0)
 
-print("Units Setup:")
-print("1: [a0^-3]")
-print("2: [m^-3]")
-unit_choice = read_int("Select unit (1-2): ", min_value=1, max_value=2)
+print("Units:")
+print("1: [a0^-3] (Atomic)")
+print("2: [m^-3] (SI Metric)")
+unit_choice = read_int("Select (1-2, default=1): ", min_value=1, max_value=2, default=1)
 
-print("cmap_data:")
+print("Palettes:")
 for i in range(len(cmap_data)):
-    print(str(i + 1) + " " + cmap_data[i][0])
-cm_idx = read_int("Select (1-" + str(len(cmap_data)) + "): ") - 1
-if cm_idx < 0 or cm_idx >= len(cmap_data):
-    cm_idx = 0
+    print(str(i + 1) + ": " + cmap_data[i])
+cm_idx = read_int("Select (1-" + str(len(cmap_data)) + ", default=6): ", min_value=1, max_value=len(cmap_data), default=6) - 1
+
 cm_name, RC, GC, BC = cmap_data[cm_idx]
 
 if R <= 0.0:
@@ -58,14 +54,10 @@ if R <= 0.0:
     if inner_term < 0:
         inner_term = 0
     r_turn = (n * n + n * sqrt(inner_term)) / Z
-
     R = r_turn * 1.5
-
     abs_offset = abs(offset)
     if abs_offset > 0.0:
         R = sqrt(R * R + abs_offset * abs_offset)
-else:
-    R = R
 
 SCR_H = 190
 PY = 10
@@ -81,11 +73,8 @@ A0_3 = A0_M * A0_M * A0_M
 unit_scale = A0_3 if unit_choice == 2 else 1.0
 unit_str = " [m^-3]" if unit_choice == 2 else " [a0^-3]"
 
-# Pass the basis selection parameter cleanly down to your core wavefunction class
 wf = HydrogenicWavefunction(n, l, m, Z, phi_slice, plane_choice, offset, is_real=is_real_basis)
-
 step = 2.0 * R / (SAMP - 1)
-
 density_3d_local = wf.density_3d
 
 if l == 0:
@@ -128,10 +117,6 @@ else:
 if peak < 1e-30:
     peak = 1e-30
 
-if alpha <= 0.0:
-    alpha = 1e-6
-log_alpha_plus_1 = log(1.0 + alpha)
-
 
 def main():
     clear_screen()
@@ -156,8 +141,8 @@ def main():
         + cm_name
         + " R="
         + str(int(R) if R == int(R) else round(R, 1))
-        + " a="
-        + str(int(alpha))
+        + " g="
+        + str(round(gamma, 2))
         + " phi="
         + str(int(phi_deg))
     )
@@ -172,7 +157,7 @@ def main():
     color_lut = []
     for i in range(256):
         norm = i / 255.0
-        val = log(1.0 + alpha * norm) / log_alpha_plus_1
+        val = norm ** gamma
         color_lut.append(cmap(val, RC, GC, BC))
 
     for sy in range(SAMP):
@@ -190,7 +175,6 @@ def main():
                 idx = 0
 
             sp(sx, py, color_lut[idx])
-
         ss()
 
     leg_den = LEG_H - 1 if LEG_H > 1 else 1
@@ -209,7 +193,7 @@ def main():
         if t_row <= 0.0:
             d_tick = 0.0
         else:
-            norm_tick = (exp(t_row * log_alpha_plus_1) - 1.0) / alpha
+            norm_tick = t_row ** (1.0 / gamma)
             d_tick = (peak * norm_tick) / unit_scale
 
         label = fmt_density(d_tick) + unit_str
