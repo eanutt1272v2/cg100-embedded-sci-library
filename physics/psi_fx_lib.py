@@ -144,7 +144,7 @@ def lgamma(x):
     if x < 0.5:
         return log(pi / sin(pi * x)) - lgamma(1.0 - x)
     x -= 1.0
-    base_a = _lanczos_coeffs
+    base_a = _lanczos_coeffs[0]
     t = x + 7.5
     for i in range(1, 9):
         base_a += _lanczos_coeffs[i] / (x + i)
@@ -152,7 +152,7 @@ def lgamma(x):
 
 
 def horner(coeffs, t):
-    v = coeffs
+    v = coeffs[0]
     for i in range(1, len(coeffs)):
         v = v * t + coeffs[i]
     return v
