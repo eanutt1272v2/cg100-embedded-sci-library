@@ -287,3 +287,4 @@ class HydrogenicWavefunction:
             val = rv * yv * phase
             return val * val
         return rv * yv * rv * yv
+        
