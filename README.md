@@ -6,9 +6,6 @@ An open-source library of MicroPython data modelling and scientific visualisatio
 
 ## Running Scripts
 
-> [!IMPORTANT]
-> Please read the complete instructions below carefully before attempting to transfer or execute scripts. Skipping steps or ignoring warnings could potentially result in data loss.
-
 ### On calculator (Casio fx-CG100)
 
 **Requirements:**
@@ -22,8 +19,6 @@ An open-source library of MicroPython data modelling and scientific visualisatio
 
 1. If the calculator is not already on, do so by pressing the **[ON]** key. Check that your calculator's system firmware is up to date.
 2. Connect the calculator to a **desktop computer** using a standard **USB-C data-transfer cable** (avoid charging-only cables).
-> [!WARNING]
-> You **must** use a standard USB-C data-transfer cable. Avoid charging-only cables, as they cannot transfer files and the calculator will not mount to your computer.
 3. When the **Select Connection Mode** dialogue box opens on the calculator screen, select the **[1] USB Flash** option and press the **[OK]** or **[EXE]** key to confirm.
 4. Wait for the display to indicate **"Preparing USB"**. The calculator will then mount on your desktop environment as a generic USB external storage device. It should be visible in your preferred file browsing interface.
 
@@ -37,8 +32,6 @@ An open-source library of MicroPython data modelling and scientific visualisatio
 #### 3. Transferring files
 
 Copy the chosen `.py` script file (and its required `_lib.py` dependency file, if applicable) from this repository into the main root directory or a designated sub-directory located within the calculator's mounted storage memory.
-> [!TIP]
-> **Always** perform a local backup of your calculator's filesystem before executing any risky operations or starting major bulk file transfers to avoid losing your files to filesystem corruption.
 
 #### 4. Execution
 
@@ -50,7 +43,7 @@ Copy the chosen `.py` script file (and its required `_lib.py` dependency file, i
 4. Press the **[⟶|] (RIGHT TAB)** key to switch the active view from the **Editor** to the **Shell** tab, which will execute your script immediately. Alternatively, press the **[⋯] (TOOLS)** key to open the **Tools** menu, and select **[4] Run** to execute your script via the **Shell** tab.
 5. Input chosen configuration values at the on-screen shell input prompts. The script will wait upon completion to keep the output pinned to your screen until you press the **[AC]** or **[⏎] (RETURN)** key to exit.
 
-### On desktop (for development and testing)
+### On desktop (for development and/or testing)
 
 **Requirements:**
 
