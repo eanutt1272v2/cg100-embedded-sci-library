@@ -20,7 +20,7 @@ An open-source MicroPython library for the Casio fx-CG100 calculator, which curr
 1. If the calculator is not already on, do so by pressing the **[ON]** key. Check that your calculator's system firmware is up to date.
 2. Connect the calculator to a **desktop computer** using a standard **USB-C data-transfer cable** (avoid charging-only cables).
 3. When the **Select Connection Mode** dialogue box opens on the calculator screen, select the **[1] USB Flash** option and press the **[OK]** or **[EXE]** key to confirm.
-4. Wait for the display to indicate **"Preparing USB"**. The calculator will then mount on your desktop environment as a generic USB external storage device. It should be visible in your preferred file browsing interface.
+4. Wait for the display to indicate **"Preparing USB"**. The calculator will then mount on your desktop environment as a generic USB external storage device. It should then be visible in your preferred file browsing interface.
 
 #### 2. Selecting a script
 
