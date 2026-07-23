@@ -1,3 +1,12 @@
+[project]
+name = "fx-cg100-embedded-sci-library"
+version = "1.0.0"
+description = "An open-source library of MicroPython data modelling and scientific visualisation scripts designed specifically to execute within the Casio fx-CG100 graphing calculator's Python application to supplement advanced STEM research and educational curricula."
+requires-python = ">=3.11"
+dependencies = [
+    "casioplot",
+]
+
 [tool.black]
 line-length = 140
 skip-magic-trailing-comma = true
