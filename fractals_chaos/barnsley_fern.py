@@ -1,63 +1,8 @@
-# Render the Barnsley fern fractal on the Casio fx-CG100.
-
-from casioplot import clear_screen, set_pixel, show_screen
 import random
+from casioplot import clear_screen, set_pixel, show_screen
+from fractal_lib import SCR_W, SCR_H, read_int, wait_for_exit
 
-try:
-    from casioplot import getkey
-except ImportError:
-    getkey = None
-
-
-def read_text(prompt, default=None):
-    while True:
-        raw = input(prompt).strip()
-        if raw:
-            return raw
-        if default is not None:
-            return default
-        print("Please enter a value.")
-
-
-def read_int(prompt, default=None, min_value=None, max_value=None):
-    while True:
-        raw = input(prompt).strip()
-        if raw == "" and default is not None:
-            value = int(default)
-        else:
-            try:
-                value = int(raw)
-            except ValueError:
-                print("Invalid integer. Try again.")
-                continue
-        if min_value is not None and value < min_value:
-            print("Value must be >= " + str(min_value))
-            continue
-        if max_value is not None and value > max_value:
-            print("Value must be <= " + str(max_value))
-            continue
-        return value
-
-
-def read_float(prompt, default=None, min_value=None, max_value=None):
-    while True:
-        raw = input(prompt).strip()
-        if raw == "" and default is not None:
-            value = float(default)
-        else:
-            try:
-                value = float(raw)
-            except ValueError:
-                print("Invalid float. Try again.")
-                continue
-        if min_value is not None and value < min_value:
-            print("Value must be >= " + str(min_value))
-            continue
-        if max_value is not None and value > max_value:
-            print("Value must be <= " + str(max_value))
-            continue
-        return value
-
+N = read_int("Points (default=5000): ", default=5000, min_value=1000, max_value=100000)
 
 def ifs(x, y):
     r = random.random()
@@ -71,26 +16,21 @@ def ifs(x, y):
         return -0.15 * x + 0.28 * y, 0.26 * x + 0.24 * y + 0.44
 
 
-def wait_for_exit():
-    if getkey is not None:
-        getkey()
-    else:
-        input("\nPress any key to exit: ")
-
-
 def main():
     clear_screen()
+
+    ss = show_screen
     x, y = 0.0, 0.0
-    N = read_int("Points (e.g. 5000): ")
 
     for _ in range(N):
         x, y = ifs(x, y)
-        px = int((x + 2.5) / 5.0 * 383)
-        py = int((1 - y / 10.0) * 191)
-        if 0 <= px <= 383 and 0 <= py <= 191:
+        px = int((x + 2.5) / 5.0 * SCR_W)
+        py = int((1 - y / 10.0) * SCR_H)
+        if 0 <= px <= SCR_W and 0 <= py <= SCR_H:
             set_pixel(px, py, (0, 150, 0))
 
-    show_screen()
+        ss()
+
     wait_for_exit()
 
 
